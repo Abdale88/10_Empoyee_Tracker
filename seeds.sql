@@ -15,7 +15,7 @@ CREATE TABLE role(
     -- to hold role title
     title VARCHAR(30) NOT NULL,
     -- to hold role salary
-    salary DECIMAL(10,4),
+    salary DECIMAL(10,2),
     -- to hold reference to department role belongs to
     department_id INT NOT NULL,
     PRIMARY KEY (id)
@@ -34,4 +34,14 @@ CREATE TABLE employee(
     PRIMARY KEY (id)
 );
 
+INSERT INTO department(name) VALUES('Sales Department');
+INSERT INTO department(name) VALUES('HR Department');
+INSERT INTO department(name) VALUES('Engineering Department');
 
+INSERT INTO role(title, salary, department_id) VALUES('Software Engineer', 12000, 2);
+INSERT INTO role(title, salary, department_id) VALUES('Product analyst ', 11000, 2);
+INSERT INTO role(title, salary, department_id) VALUES('HR Employee', 10000, 2);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Daahir', 'Hassan', 2, 4);
+INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Faarax', 'Axmed', 2, 4);
+INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Maxamed', 'Jaamac', 2, 4);
