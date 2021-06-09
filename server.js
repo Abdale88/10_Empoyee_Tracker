@@ -193,6 +193,55 @@ const addDepartment = () => {
     })
 }
 
+const addRole = () => {
+    connection.query('SELECT title, salary, department_id FROM role', (err) => {
+
+        if (err) throw err;
+        connection.query('SELECT name, id FROM department', (err, res) =>{
+            if (err) throw err;
+          
+            inquirer.prompt([
+                {
+                    name: 'title',
+                    type:  'input',
+                    message: 'What role you want to add?'
+                },
+                {
+                    name: 'salary',
+                    type: 'input',
+                    message: "What is the salary?"
+                    //validate here
+                },
+                {
+                    name: 'departmentId',
+                    type: 'rawlist',
+                    message: "Which department does role belong to?",
+                    choices(){
+                        const arrList =  [];
+                        res.forEach(({name}) =>{
+                           arrList.push(name);
+                        })
+                        return arrList;
+                    }
+                }
+            ])
+            .then((answer) => {
+                connection.query('SELECT id FROM department WHERE ? ', {name: answer.departmentId}, (err, idRes) =>{
+                    if (err) throw err;
+                    const [{id}] = idRes
+                    connection.query('INSERT INTO role SET ?', {
+                        title: answer.title,
+                        salary: answer.salary,
+                        department_id: id,
+                    })
+                    console.log('You added a role successfully');
+                    startQuestions();
+                })
+            })
+        })
+    })
+}
+
 
 connection.connect((err, res) => {
     if (err) throw err;
