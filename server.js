@@ -71,6 +71,110 @@ const startQuestions = () => {
         });
 }
 
+const addEmployee = () => {
+    connection.query('SELECT title FROM role', (err, res) => {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: 'firstName',
+                    type: 'input',
+                    message: "What is the employee's first name?"
+                },
+                {
+                    name: 'lastName',
+                    type: 'input',
+                    message: "What is the employee's last name?"
+                },
+                {
+                    name: 'role',
+                    type: 'rawlist',
+                    message: "What is the employee's role?",
+                    choices() {
+                        const titleArray = [];
+
+                        res.forEach(({ title }) => {
+                            titleArray.push(title);
+
+                        });
+                        return titleArray;
+                    }
+                },
+            ])
+            .then((answer) => {
+                connection.query('SELECT id FROM role WHERE ?', { title: answer.role }, (err, res) => {
+                    let [{ id }] = res;
+                    let roleId = id;
+
+                    connection.query('SELECT first_name, last_name FROM employee WHERE manager_id IS NULL', (err, res) => {
+                        if (err) throw err;
+                        inquirer.prompt([
+                     
+                            {
+                                name: 'manager',
+                                type: 'rawlist',
+                                message: "What is the employee's manager?",
+                                choices() {
+                                    const arrOfObj = [];
+                                    res.forEach(({first_name, last_name}) => {
+                                        arrOfObj.push(first_name);
+                                    });
+                                    arrOfObj.push('None')
+                                    return (arrOfObj);
+                                }
+                            },
+                        ])
+                        .then((newAnswer) => {
+                            connection.query('SELECT id FROM employee WHERE ?', {first_name: newAnswer.manager}, (err, managerRes) =>{
+                             
+                              if (err) throw err;
+                                if (newAnswer.manager === 'None'){
+                                    connection.query(
+                                        'INSERT INTO employee SET ?',
+                                        {
+                                            first_name: answer.firstName,
+                                            last_name: answer.lastName,
+                                            role_id: roleId,
+                                        },
+                                        (err) => {
+                                            if (err) throw err;
+                                            console.log('You added a manager successfully to your database!');
+                                            startQuestions();
+                                        }
+                                    );
+                                }
+                                else{
+                                    let [{id}] = managerRes;
+                                    let managerId = id;
+                                    connection.query(
+                                        'INSERT INTO employee SET ?',
+                                        {
+                                            first_name: answer.firstName,
+                                            last_name: answer.lastName,
+                                            role_id: roleId,
+                                            manager_id: managerId,
+                                        },
+                
+                                        (err) => {
+                                            if (err) throw err;
+                                            console.log('You added an employee successfully!');
+                                            startQuestions();
+                                        }
+                                    );
+                                }
+                            })
+
+                        }) 
+                    })
+                });
+            });
+
+
+    });
+
+};
+
+
 connection.connect((err, res) => {
     if (err) throw err;
     startQuestions();
