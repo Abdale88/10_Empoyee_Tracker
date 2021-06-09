@@ -242,6 +242,27 @@ const addRole = () => {
     })
 }
 
+function viewEmployees() {
+    let query = 
+    `SELECT 
+        e.id, 
+        e.first_name, 
+        e.last_name,
+        r.title,
+        CONCAT(d.name) AS department,
+        r.salary,
+        CONCAT(managers.first_name, ' ', managers.last_name) AS manager
+        FROM employee e LEFT JOIN role r ON e.role_id = r.id LEFT JOIN department d ON d.id = r.department_id LEFT JOIN employee managers ON managers.id = e.manager_id
+    `;
+    connection.query(query, (err, res)=>{
+        if (err) throw err;
+        console.table(res);
+        startQuestions();
+
+    });
+
+}
+
 
 connection.connect((err, res) => {
     if (err) throw err;
