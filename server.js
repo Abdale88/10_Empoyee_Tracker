@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const cTable = require('console.table');
 const asciiart = require('asciiart-logo');
 
+
 const connection = mysql.createConnection({
     host: 'localhost',
     port: '3306',
@@ -14,5 +15,6 @@ const connection = mysql.createConnection({
 
 
 connection.connect((err, res) => {
-    if(err) throw err;s
+    if (err) throw err;
+
 })

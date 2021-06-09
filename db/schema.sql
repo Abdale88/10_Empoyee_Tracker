@@ -28,20 +28,8 @@ CREATE TABLE employee(
     -- to hold employee last name
     last_name VARCHAR(30) NOT NULL,
     -- to hold reference to role employee has
-    role_id INT NOT NULL,
+    role_id INT NULL,
     -- to hold reference to another employee that manages the employee being Created.
-    manager_id INT,
+    manager_id INT NULL,
     PRIMARY KEY (id)
 );
-
-INSERT INTO department(name) VALUES('Sales Department');
-INSERT INTO department(name) VALUES('HR Department');
-INSERT INTO department(name) VALUES('Engineering Department');
-
-INSERT INTO role(title, salary, department_id) VALUES('Software Engineer', 12000, 2);
-INSERT INTO role(title, salary, department_id) VALUES('Product analyst ', 11000, 2);
-INSERT INTO role(title, salary, department_id) VALUES('HR Employee', 10000, 2);
-
-INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Daahir', 'Hassan', 2, 4);
-INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Faarax', 'Axmed', 2, 4);
-INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES('Maxamed', 'Jaamac', 2, 4);
