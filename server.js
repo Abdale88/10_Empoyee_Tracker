@@ -174,6 +174,25 @@ const addEmployee = () => {
 
 };
 
+const addDepartment = () => {
+    connection.query('SELECT name FROM department',(err) => {
+        if (err) throw err;
+        inquirer.prompt({
+            name: 'department',
+            type: "input",
+            message: "What department you want to add?"
+        })
+        .then((answer) => {
+            connection.query('INSERT INTO department SET ?', {
+                name: answer.department,
+            });
+            console.log('You added a department successfully');
+            startQuestions();
+            
+        })
+    })
+}
+
 
 connection.connect((err, res) => {
     if (err) throw err;
