@@ -279,6 +279,79 @@ const viewAllDepartments = () => {
     })
 }
 
+const updateEmployeeRole = () => {
+    empChoices();
+}
+
+const empChoices = () => {
+    connection.query(
+    `
+    SELECT e.id, e.first_name,
+     e.last_name,
+    r.title,
+    CONCAT(d.name) AS department, 
+    r.salary,
+     CONCAT(managers.first_name, ' ', managers.last_name) AS manager
+    FROM employee e 
+    JOIN role r ON e.role_id = r.id
+    JOIN department d ON d.id = r.department_id 
+    JOIN employee managers ON managers.id = e.manager_id
+     `, (err, res) => {
+         if (err) throw err;
+         let emp = res.map(({id, first_name, last_name}) =>({
+             value: id, name: `${first_name} ${last_name}`, 
+         }));
+         roleChoices(emp);
+     })
+}
+
+const roleChoices = (userRole) => {
+    var query = 'SELECT r.id, r.title, r.salary FROM role r'
+    let choices;
+    connection.query( query, (err, res) =>{
+          if (err) throw err;
+
+         choices = res.map(({id, title, salary}) => 
+        ({
+            value: id, title: `${title}`, salary: `${salary}`
+        }));
+        console.table(res);
+        updatedRole(userRole, choices)
+    })
+}
+
+const updatedRole = (employeeChoices, role) => {
+    
+   inquirer.prompt([
+    {
+        name: 'employee',
+        type: 'rawlist',
+        message: "Which employee's role do you want to update?",
+        choices: employeeChoices,
+               
+    },
+            
+    {
+        name: 'empRole',
+        type: 'rawlist',
+        message: 'Choose which role you want from the above list',
+        choices: role,
+    }
+    ])
+    .then((answer) =>{
+
+        connection.query(`UPDATE employee SET role_id = ? WHERE id = ?`,
+        [
+          answer.empRole,
+          answer.employee,
+          ],
+          (err, res) => {
+              if (err) throw err;
+              console.log('You updated your database successfully!');
+              startQuestions();
+            });
+    })                                    
+};
 
 connection.connect((err, res) => {
     if (err) throw err;
