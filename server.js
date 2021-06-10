@@ -271,6 +271,13 @@ const viewRoles = () => {
     })
 }
 
+const viewAllDepartments = () => {
+    connection.query('SELECT CONCAT(name) AS Departments FROM department', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        startQuestions();
+    })
+}
 
 
 connection.connect((err, res) => {
