@@ -263,6 +263,15 @@ function viewEmployees() {
 
 }
 
+const viewRoles = () => {
+    connection.query('SELECT CONCAT(title) AS Roles FROM role', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        startQuestions();
+    })
+}
+
+
 
 connection.connect((err, res) => {
     if (err) throw err;
